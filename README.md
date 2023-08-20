@@ -90,32 +90,44 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
    
 ### WSL
 
-1. Clone this repository on an existing NixOS (Linux) based system, and run:
+1. Build the latest `main` branch of [NixOS-WSL](https://github.com/nix-community/NixOS-WSL)
+   on an existing NixOS system:
 
    ```shell
-   nix build .#nixosConfigurations.<MACHINE>-wsl.config.system.build.installer
+   nix build .#nixosConfigurations.mysystem.config.system.build.installer
    ```
 
-2. This will produce a tarball in `./result/tarball/nixos-wsl-installer.tar.gz`,
+3. This will produce a tarball in `./result/tarball/nixos-wsl-installer.tar.gz`,
    copy it somewhere (e.g USB).
 
-3. Import the NixOS distribution tarball into the appropriate location (where you want
+4. Import the NixOS distribution tarball into the appropriate location (where you want
    `.\NixOS\` to be located, e.g. on a data drive:
 
    ```shell
    wsl --import NixOS .\NixOS\ nixos-wsl-installer.tar.gz --version 2
    ```
 
-4. Now you have a base system with the packages from this flake.
-
-5. Launch the distribution using Windows Terminal followed by:
+5. Launch the distribution:
 
    ```shell
    wsl -d NixOS
    ```
 
-6. Clone this repository to `/etc/nixos/nixos-config`, and run the first `./rebuild`
-   to ensure the users and Home Manager get set up.
+6. Clone this repository to `/etc/nixos/nixos-config`:
+
+   ```shell
+   nix-shell -p git
+   git clone https://github.com/leonbreedt/nixos-config.git /etc/nixos/nixos-config
+   ```
+
+7. Ensure the `root` user has the SSH public key for cloning the secret repository 
+   referenced by the `flake.nix`, it should be put in `/root/.ssh` with appropriate
+   permissions. Run `ssh git@github.com` at least once, and save the GitHub SSH key
+   (needed to avoid the `nixos-install` command hanging waiting for user input when
+   cloning the secrets repo).
+
+8. Change to `/etc/nixos/nixos-config` and run `env FLAKE=<WSL-FLAKE-NAME> ./rebuild`
+   to do the initial build.   
 
 ## Using
 
