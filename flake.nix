@@ -180,6 +180,8 @@
               };
             };
           }
+          ./wsl
+          inputs.wsl.nixosModules.wsl
         ];
         specialArgs = {
           secrets = secrets;
