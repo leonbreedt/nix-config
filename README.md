@@ -90,17 +90,32 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
    
 ### WSL
 
-1. Create a 23.05+ installer for WSL by following the instructions at
-   <https://github.com/nix-community/NixOS-WSL#building-your-own-system-tarball>.
-   You will need an already running NixOS (Linux) system to do this. This
-   is needed because the last NixOS-WSL published release is too old.
+1. Clone this repository on an existing NixOS (Linux) based system, and run:
 
-2. Import the NixOS distribution into the appropriate location (where you want
+   ```shell
+   nix build .#nixosConfigurations.<MACHINE>-wsl.config.system.build.installer
+   ```
+
+2. This will produce a tarball in `./result/tarball/nixos-wsl-installer.tar.gz`,
+   copy it somewhere (e.g USB).
+
+3. Import the NixOS distribution tarball into the appropriate location (where you want
    `.\NixOS\` to be located, e.g. on a data drive:
 
    ```shell
    wsl --import NixOS .\NixOS\ nixos-wsl-installer.tar.gz --version 2
    ```
+
+4. Now you have a base system with the packages from this flake.
+
+5. Launch the distribution using Windows Terminal followed by:
+
+   ```shell
+   wsl -d NixOS
+   ```
+
+6. Clone this repository to `/etc/nixos/nixos-config`, and run the first `./rebuild`
+   to ensure the users and Home Manager get set up.
 
 ## Using
 
