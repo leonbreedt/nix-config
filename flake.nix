@@ -37,6 +37,7 @@
     defaultMachineConfig = {
       isPersonal = true;
       isDesktop = false;
+      isWSL = false;
       enableDocker = false;
       isUnifiController = false;
       shouldBackupWithTarsnap = false;
@@ -177,6 +178,7 @@
               machineConfig = defaultMachineConfig // {
                 isDesktop = true;
                 enableDocker = true;
+                isWSL = true;
               };
             };
           }
@@ -191,6 +193,7 @@
           machineConfig = defaultMachineConfig // {
             isDesktop = true;
             enableDocker = true;
+            isWSL = true;
           };
         };
       };
