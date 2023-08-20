@@ -90,7 +90,17 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
    
 ### WSL
 
-**TODO**: Still have to port my old configuration.
+1. Create a 23.05+ installer for WSL by following the instructions at
+   <https://github.com/nix-community/NixOS-WSL#building-your-own-system-tarball>.
+   You will need an already running NixOS (Linux) system to do this. This
+   is needed because the last NixOS-WSL published release is too old.
+
+2. Import the NixOS distribution into the appropriate location (where you want
+   `.\NixOS\` to be located, e.g. on a data drive:
+
+   ```shell
+   wsl --import NixOS .\NixOS\ nixos-wsl-installer.tar.gz --version 2
+   ```
 
 ## Using
 
