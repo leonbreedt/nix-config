@@ -16,7 +16,7 @@
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    wsl = {
+    nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -26,7 +26,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, stable-nixos, home-manager, darwin, wsl, secrets, ... }@inputs: 
+  outputs = { self, nixpkgs, stable-nixos, home-manager, darwin, nixos-wsl, secrets, ... }@inputs: 
   let
     pkgConfig = {
       allowUnfree = true;
@@ -183,7 +183,7 @@
             };
           }
           ./wsl
-          inputs.wsl.nixosModules.wsl
+          inputs.nixos-wsl.nixosModules.wsl
         ];
         specialArgs = {
           secrets = secrets;

@@ -9,6 +9,7 @@ macos() {
   FLAKE="${FLAKE:-$host}"
   system="darwinConfigurations.$FLAKE.system"
 
+  echo "rebuilding: on macOS"
   nix --experimental-features 'nix-command flakes' build "${FLAKE_DIR}#$system" --impure $@
   ./result/sw/bin/darwin-rebuild switch --flake .#$FLAKE --impure $@
   rm -rf ./result
@@ -18,13 +19,26 @@ nixos() {
   host="$(hostname)"
   FLAKE="${FLAKE:-$host}"
   system="nixosConfigurations.$FLAKE.system"
+
+  echo "rebuilding: on NixOS"
   # --install-bootloader is a workaround for https://github.com/NixOS/nixpkgs/issues/223579,
   # remove it once that bug is fixed
   sudo -E /run/current-system/sw/bin/nixos-rebuild switch --flake "${FLAKE_DIR}#$FLAKE" --install-bootloader $@
 }
 
+wsl() {
+  host="$(hostname)"
+  FLAKE="${FLAKE:-${host}-wsl}"
+  system="nixosConfigurations.$FLAKE.system"
+
+  echo "rebuilding: on WSL"
+  sudo -E /run/current-system/sw/bin/nixos-rebuild switch --flake "${FLAKE_DIR}#$FLAKE" $@
+}
+
 if [ "$(uname)" == "Darwin" ]; then
   macos $@
+elif [[ $(grep -i microsoft /proc/version) ]]; then
+  wsl $@
 elif [ "$(uname)" == "Linux" ]; then
   nixos $@
 else
