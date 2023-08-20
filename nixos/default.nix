@@ -193,5 +193,5 @@ ${pkgs.tarsnap}/bin/tarsnap \
   };
 
 
-  system.stateVersion = "22.11"; # Don't change this
+  system.stateVersion = "23.11"; # Don't change this
 }
