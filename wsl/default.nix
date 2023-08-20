@@ -1,11 +1,11 @@
 {
   pkgs,
-  username,
+  user,
   ...
 }: {
   wsl = {
     enable = true;
-    defaultUser = "${username}";
+    defaultUser = "${user}";
     startMenuLaunchers = true;
     nativeSystemd = true;
 
