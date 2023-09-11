@@ -30,7 +30,7 @@
           # user, only user completely managed by it, which we will
           # never have on macOS
           system.activationScripts.postUserActivation.text = ''
-            chsh -s /run/current-system/sw/bin/fish ${user}
+            sudo chsh -s /run/current-system/sw/bin/fish ${user}
           '';
 
           # home-manager base configuration.
