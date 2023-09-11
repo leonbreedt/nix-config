@@ -39,6 +39,61 @@
         alias less "bat -p"
         alias ls "eza"
         '';
+      plugins = [
+        {
+          name = "theme-bobthefish";
+          src = pkgs.fetchFromGitHub {
+            owner = "oh-my-fish";
+            repo = "theme-bobthefish";
+            rev = "2dcfcab653ae69ae95ab57217fe64c97ae05d8de";
+            sha256 = "sha256-jBbm0wTNZ7jSoGFxRkTz96QHpc5ViAw9RGsRBkCQEIU=";
+          };
+        }
+      ];
     };
+
+    # Git
+    git = {
+      enable = true;
+      lfs.enable = true;
+      aliases = {
+        co = "checkout";
+        ca = "commit --all";
+        fa = "fetch --all";
+        fap = "!git fetch --all && git pull --autostash";
+        lg = "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(r) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative";
+        st = "status";
+        root = "rev-parse --show-toplevel";
+      };
+      includes = [
+        {
+          path = "~/.config/git/personal";
+          condition = "gitdir:~/";
+        }
+        {
+          path = "~/.config/git/personal";
+          condition = "gitdir:/etc/nixos/";
+        }
+      ];
+      extraConfig = {
+        branch.autosetuprebase = "always";
+        color.ui = true;
+        color.diff = "auto";
+        color.status = "auto";
+        color.interactive = "auto";
+        color.pager = true;
+        core.askPass = "";
+        credential.helper = "store";
+        credentialstore.locktimeoutms = 0;
+        github.user = "leonbreedt";
+        push.default = "tracking";
+        pull.rebase = true;
+        init.defaultBranch = "main";
+      };
+    };
+
+    # Utils
+    gpg.enable = true;
+    direnv.enable = true;
   };
 }

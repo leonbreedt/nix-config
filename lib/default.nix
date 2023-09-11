@@ -20,6 +20,12 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
+          # System packages
+          environment.systemPackages =
+            (import ../common/packages.nix { inherit pkgs; })
+            ++
+            (import ../macos/packages.nix { inherit pkgs; });
+
           # Base nix-darwin user configuration,
           # don't specify anything here other than 
           # name and home dir, as nix-darwin will 
@@ -42,7 +48,8 @@
             useGlobalPkgs = true;
             useUserPackages = false;
             users.${user} =
-              (import ../common/home.nix { inherit pkgs; }) //
+              (import ../common/home.nix { inherit pkgs; })
+              //
               (import ../macos/home.nix { inherit pkgs; });
           };
         }

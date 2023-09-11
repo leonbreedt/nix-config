@@ -16,9 +16,6 @@
   networking.hostName = "${hostname}";
 
   environment = {
-    # Install common packages globally
-    systemPackages = import ./packages.nix { inherit pkgs; };
-
     # Make Fish shell available in /etc/shells
     shells = [ pkgs.fish ];
   };
