@@ -26,6 +26,11 @@ macos() {
     curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
   }
 
+  profile_sh=/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  [ -f $profile_sh ] && source $profile_sh
+
+  need_cmd nix
+
   #need_cmd nix-channel
 
   #msg "adding nixpkgs channel"
