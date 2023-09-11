@@ -34,7 +34,7 @@
           # home-manager base configuration.
           home-manager = {
             useGlobalPkgs = true;
-            useUserPackages = true;
+            useUserPackages = false;
             users.${user} = import ../macos/home.nix { inherit pkgs; stateVersion = "23.11"; };
           };
         }
