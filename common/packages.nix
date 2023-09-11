@@ -41,6 +41,7 @@ with pkgs; [
   pwgen
   ripgrep
   rustup
+  sf-mono
   step-cli
   sqlite
   terraform

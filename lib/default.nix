@@ -1,10 +1,18 @@
 {inputs, ...}:
 
-{
+rec {
+  # Loads all modules in a directory.
+  overlays = let
+      path = ../overlays;
+    in with builtins;
+      map (n: import (path + ("/" + n)))
+      (filter (n: match ".*\\.nix" n != null || pathExists (path + ("/" + n + "/default.nix")))
+              (attrNames (readDir path)));
+
   # Builder for a macOS system.
   mkDarwin = { hostname, system, user }:
     let
-      pkgs = builtins.getAttr system inputs.nixpkgs.outputs.legacyPackages;
+      pkgs = import inputs.nixpkgs { inherit system overlays; };
     in
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
