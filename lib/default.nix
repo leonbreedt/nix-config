@@ -6,6 +6,10 @@
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
 
+      specialArgs = {
+        inherit hostname system user;
+      };
+
       modules = [
         # MacOS specific
         ../macos
