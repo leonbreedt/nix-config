@@ -20,10 +20,11 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
-          # Enable fish at nix-darwin level too.
-          programs.fish.enable = true;
-
-          # Base nix-darwin user configuration.
+          # Base nix-darwin user configuration,
+          # don't specify anything here other than 
+          # name and home dir, as nix-darwin will 
+          # ignore extra attributes for users it
+          # did not create
           users.users.${user} = {
             name = user;
             home = "/Users/${user}";

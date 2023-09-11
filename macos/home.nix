@@ -15,6 +15,4 @@
       MANPAGER = "bat -p";
     };
   };
-
-  programs.fish.enable = true;
 }

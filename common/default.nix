@@ -22,4 +22,7 @@
     # Make Fish shell available in /etc/shells
     shells = [ pkgs.fish ];
   };
+
+  # Set up common programs globally
+  programs = import ./programs.nix;
 }
