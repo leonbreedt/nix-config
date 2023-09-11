@@ -8,43 +8,14 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
 
 1. Install Nix using the [Determinate Systems](https://github.com/DeterminateSystems/nix-installer) Nix installer.
 
-2. Add the nixpkgs channel.
-
-   ```shell
-   nix-channel --add https://nixos.org/channels/nixpkgs-unstable nixpkgs
-   ```
-
-3. Update the Nix channel.
-
-   ```shell
-   nix-channel --update
-   ```
-
-4. Install [home-manager](https://github.com/nix-community/home-manager). This is used to manage configuration files
-   in $HOME.
-
-   ```shell
-   nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
-   ```
-
-5. Install [nix-darwin](https://github.com/LnL7/nix-darwin). This is used to manage macOS system configuration.
-
-   ```shell
-   nix-build https://github.com/LnL7/nix-darwin/archive/master.tar.gz -A installer
-   ./result/bin/darwin-installer
-   ```
-
-   When asked, answer yes to managing Darwin with nix-channel.
-
-6. Ensure that the current user is able to clone the private secrets repo before proceeding to the
+2. Ensure that the current user is able to clone the private secrets repo before proceeding to the
    next step, e.g. set up the SSH keys. 
-   
-7. Install Homebrew (it's only used to install cask apps).
 
-8. Run `env FLAKE=<NAME> ./rebuild`, where `<NAME>` is the name of your system in `flake.nix`, e.g.
-   `athena` in my example. You can run this again after you make any changes to `.nix` files, to
-   apply them to your system. If any files are reported as being in the way, move them out of the way
-   and re-run.
+3. Run `env FLAKE=<NAME> ./bootstrap`. After a successful bootstrap, the hostname will be updated to match
+   the flake.
+
+4. Whenever you make configuration changes, run `./rebuild`. If any files are
+   reported as being in the way, move them out of the way and re-run.
 
 ### NixOS
 
