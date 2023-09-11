@@ -33,9 +33,11 @@ macos() {
 
   msg "bootstrap completed"
 
-  # will be replaced by generated flake version
-  msg "removing /etc/nix/nix.conf (will be replaced)"
+  # will be replaced by generated flake versions
+  msg "moving /etc/nix/nix.conf (will be replaced)"
   [ -f /etc/nix/nix.conf ] && sudo mv -f /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
+  msg "moving /etc/shells (will be replaced)"
+  [ -f /etc/shells ] && sudo mv -f /etc/shells /etc/shells.before-nix-darwin
 
   ./rebuild
 }
