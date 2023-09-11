@@ -16,6 +16,10 @@
         # Users and Home Manager basics
         inputs.home-manager.darwinModules.home-manager
         ({pkgs, ...}: {
+          # Enable usage of Fish as shell,
+          # shell will not be set for user otherwise.
+          programs.fish.enable = true;
+
           # nix-darwin user creation
           users.users.${user} = {
             name = user;
