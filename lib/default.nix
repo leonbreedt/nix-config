@@ -7,6 +7,9 @@
       inherit system;
 
       modules = [
+        # MacOS specific
+        ../macos
+        # Users and Home Manager basics
         inputs.home-manager.darwinModules.home-manager
         ({pkgs, ...}: {
           # nix-darwin user creation
