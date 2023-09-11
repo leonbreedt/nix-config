@@ -20,6 +20,12 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
+          # Base nix-darwin user configuration.
+          users.users.${user} = {
+            name = user;
+            home = "/Users/${user}";
+          };
+
           # nix-darwin does not change shell of already-existing
           # user, only user completely managed by it, which we will
           # never have on macOS
