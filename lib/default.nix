@@ -32,11 +32,7 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            users.${user} = import ../macos/home.nix {
-              inherit pkgs;
-              enableNixpkgsReleaseCheck = false;
-              stateVersion = "23.11";
-            };
+            users.${user} = import ../macos/home.nix { inherit pkgs; stateVersion = "23.11"; };
           };
         })
       ];
