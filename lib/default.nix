@@ -12,7 +12,7 @@
 
       modules = [
         # MacOS specific
-        ({pkgs, ...}: import ../macos/default.nix { inherit pkgs; })
+        ({pkgs, ...}: import ../macos/default.nix { inherit pkgs hostname; })
         # Users and Home Manager basics
         inputs.home-manager.darwinModules.home-manager
         ({pkgs, ...}: {
