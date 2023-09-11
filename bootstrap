@@ -35,7 +35,7 @@ macos() {
 
   # will be replaced by generated flake version
   msg "removing /etc/nix/nix.conf (will be replaced)"
-  sudo rm -f /etc/nix/nix.conf
+  [ -f /etc/nix/nix.conf ] && sudo mv -f /etc/nix/nix.conf /etc/nix/nix.conf.before-nix-darwin
 
   ./rebuild
 }
