@@ -3,20 +3,24 @@
 {
   # Builder for a macOS system.
   mkDarwin = { hostname, system, user }:
+    let
+      pkgs = builtins.getAttr system inputs.nixpkgs.outputs.legacyPackages;
+    in
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
 
       specialArgs = {
-        inherit hostname system user;
+        inherit pkgs hostname system user;
       };
 
       modules = [
         ../common
         ../macos
-        # Users and Home Manager basics
+
         inputs.home-manager.darwinModules.home-manager
-        ({pkgs, ...}: {
-          # Enable usage of Fish as shell,
+
+        {
+          # Enable usage of Fish as shell in nix-darwin,
           # shell will not be set for user otherwise.
           programs.fish.enable = true;
 
@@ -34,7 +38,7 @@
             useUserPackages = true;
             users.${user} = import ../macos/home.nix { inherit pkgs; stateVersion = "23.11"; };
           };
-        })
+        }
       ];
     };
 }

@@ -15,6 +15,11 @@
   # Ensure hostname is set system-wide.
   networking.hostName = "${hostname}";
 
-  # Make Fish shell availble
-  environment.shells = [ pkgs.fish ];
+  environment = {
+    # Install common packages globally
+    systemPackages = import ./packages.nix { inherit pkgs; };
+
+    # Make Fish shell available in /etc/shells
+    shells = [ pkgs.fish ];
+  };
 }
