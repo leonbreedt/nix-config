@@ -20,9 +20,8 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
-          # Enable usage of Fish as shell in nix-darwin,
-          # shell will not be set for user otherwise.
-          programs.fish.enable = true;
+          # Needs to be turned off at nix-darwin level.
+          programs = { };
 
           # nix-darwin user creation
           users.users.${user} = {
