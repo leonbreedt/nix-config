@@ -9,7 +9,7 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
 1. Install Nix using the [Determinate Systems](https://github.com/DeterminateSystems/nix-installer) Nix installer.
 
 2. Ensure that the current user is able to clone the private secrets repo before proceeding to the
-   next step, e.g. set up the SSH keys. 
+   next step, by putting the SSH private key needed to clone the repo into `$HOME/.ssh/id_rsa`.
 
 3. Run `env FLAKE=<NAME> ./bootstrap`. After a successful bootstrap, the hostname will be updated to match
    the flake.
