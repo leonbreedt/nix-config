@@ -74,11 +74,11 @@
         "rev": "b8533beb1b733fe4e3afe4caf457704b60f93bf2",
         "revCount": 18,
         "type": "git",
-        "url": "ssh://git@github.com/leonbreedt/private.git"
+        "url": "ssh://git@github.com/leonbreedt/secrets.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/leonbreedt/private.git"
+        "url": "ssh://git@github.com/leonbreedt/secrets.git"
       }
     }
   },

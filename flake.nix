@@ -17,7 +17,7 @@
     };
 
     secrets = {
-      url = "git+ssh://git@github.com/leonbreedt/private.git";
+      url = "git+ssh://git@github.com/leonbreedt/secrets.git";
       flake = false;
     };
   };
