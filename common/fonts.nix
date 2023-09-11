@@ -1,5 +1,5 @@
 # System font configuration
-{ pkgs }:
+{ pkgs, ... }:
 
 {
   fonts = {
