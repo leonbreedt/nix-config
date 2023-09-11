@@ -32,11 +32,12 @@
           fish_add_path "/Applications/Postgres.app/Contents/Versions/latest/bin"
         end
 
-        set -gx CDPATH . $HOME/Source
+        set -gx CDPATH . $HOME/Source $HOME/source
 
         alias kc kubectl
         alias cat "bat -p"
         alias less "bat -p"
+        alias ls "eza"
         '';
     };
   };
