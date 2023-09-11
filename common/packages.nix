@@ -12,7 +12,7 @@ with pkgs; [
   deno
   difftastic
   du-dust
-  eza
+  exa
   fd
   fish
   flyctl

@@ -3,7 +3,7 @@
 
 {
   home = {
-    stateVersion = "23.11";
+    stateVersion = "23.05";
 
     sessionVariables = {
       TERM = "xterm-256color";
@@ -37,7 +37,7 @@
         alias kc kubectl
         alias cat "bat -p"
         alias less "bat -p"
-        alias ls "eza"
+        alias ls "exa"
         '';
       plugins = [
         {
