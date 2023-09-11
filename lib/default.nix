@@ -7,9 +7,8 @@
       inherit system;
 
       modules = [
+        inputs.home-manager.darwinModules.home-manager
         ({pkgs, ...}: {
-          imports = [ <home-manager/nix-darwin>  ];
-
           # nix-darwin user creation
           users.users.${user} = {
             name = user;
