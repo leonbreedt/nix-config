@@ -20,16 +20,12 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
-          # Needs to be turned off at nix-darwin level.
-          programs = { };
-
-          # nix-darwin user creation
-          users.users.${user} = {
-            name = user;
-            home = "/Users/${user}";
-            isHidden = false;
-            shell = pkgs.fish;
-          };
+          # nix-darwin does not change shell of already-existing
+          # user, only user completely managed by it, which we will
+          # never have on macOS
+          system.activationScripts.postUserActivation.text = ''
+            chsh -s ${pkgs.fish}/bin/fish ${user}
+          '';
 
           # home-manager base configuration.
           home-manager = {
