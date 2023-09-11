@@ -2,32 +2,36 @@
   description = "NixOS, macOS and WSL system configuration";
 
   inputs = {
-    nixpkgs-unstable = {
+    nixpkgs = {
       url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     };
+
     nix-darwin = {
       url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     secrets = {
       url = "git+ssh://git@github.com/leonbreedt/private.git";
       flake = false;
     };
   };
 
-  outputs = inputs: 
+  outputs = {nixpkgs, nix-darwin, secrets, ...}@inputs: 
   let
-    todo = 1;
+    lib = import ./lib { inherit inputs; };
   in
   {
     darwinConfigurations = {
-      # Test VM
-      "Leons-Virtual-Machine" = inputs.nix-darwin.lib.darwinSystem {
+      leon-vm = lib.mkDarwin {
         system = "aarch64-darwin";
-        modules = [];
-        inputs = { };
-        specialArgs = {
-        };
+        hostname = "leon-vm";
+        user = "leon";
       };
     };
 

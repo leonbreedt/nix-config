@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+export NIXPKGS_ALLOW_UNFREE=1
+unset CDPATH
+FLAKE_DIR=$(cd "$(dirname "$0")"; pwd)
+
+macos() {
+  host="$(hostname)"
+  FLAKE="${FLAKE:-$host}"
+  system="darwinConfigurations.$FLAKE.system"
+
+  echo "building: on macOS"
+  nix --experimental-features 'nix-command flakes' build "${FLAKE_DIR}#$system" --impure $@
+  #rm -rf ./result
+}
+
+if [ "$(uname)" == "Darwin" ]; then
+  macos $@
+else
+  echo "Unsupported operating system for build"
+fi
