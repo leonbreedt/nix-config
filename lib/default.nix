@@ -41,7 +41,9 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = false;
-            users.${user} = import ../macos/home.nix { inherit pkgs; };
+            users.${user} =
+              (import ../common/home.nix { inherit pkgs; }) //
+              (import ../macos/home.nix { inherit pkgs; });
           };
         }
       ];

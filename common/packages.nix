@@ -4,6 +4,6 @@
 
 with pkgs; [
   bat
-  exa
+  eza
   fish
 ]
