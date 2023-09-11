@@ -20,6 +20,9 @@
         inputs.home-manager.darwinModules.home-manager
 
         {
+          # Enable fish at nix-darwin level too.
+          programs.fish.enable = true;
+
           # Base nix-darwin user configuration.
           users.users.${user} = {
             name = user;
