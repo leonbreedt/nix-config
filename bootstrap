@@ -43,6 +43,8 @@ macos() {
   #nix-channel --update
 
   # nix-darwin installer no longer needed on flake-based systems
+  
+  msg "bootstrap completed, ready to build/rebuild"
 }
 
 if [ "$(uname)" == "Darwin" ]; then
