@@ -3,5 +3,7 @@
 { pkgs }:
 
 with pkgs; [
+  bat
+  exa
   fish
 ]
