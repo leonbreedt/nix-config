@@ -23,7 +23,6 @@ rec {
 
       modules = [
         ../common
-        ../common/fonts.nix
         ../macos
 
         inputs.home-manager.darwinModules.home-manager
