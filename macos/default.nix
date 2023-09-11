@@ -1,7 +1,7 @@
-{ pkgs, hostname, ... }:
+# macOS-specific configuration
+
+{ ... }:
 
 {
   services.nix-daemon.enable = true;
-  networking.hostName = "${hostname}";
-  environment.shells = [ pkgs.fish ];
 }
