@@ -31,7 +31,11 @@ macos() {
 
   need_cmd nix
 
-  msg "bootstrap completed, rebuilding."
+  msg "bootstrap completed"
+
+  # will be replaced by generated flake version
+  msg "removing /etc/nix/nix.conf (will be replaced)"
+  sudo rm -f /etc/nix/nix.conf
 
   ./rebuild
 }
