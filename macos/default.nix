@@ -9,6 +9,9 @@
   # Disable NIX_PATH validation checks, we are using flakes.
   system.checks.verifyNixPath = false;
 
+  # MacOS preferences.
+  system.defaults = import ./preferences.nix;
+
   # Install fonts in font directory.
   # Font configuration uses different attributes on macOS ('fonts' instead of 'packages').
   fonts = {
