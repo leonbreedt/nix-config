@@ -45,6 +45,8 @@
         alias cat "bat -p"
         alias less "bat -p"
         alias ls "exa"
+        alias vi "nvim"
+        alias vim "nvim"
         '';
       plugins = [
         {
