@@ -13,6 +13,12 @@
       EDITOR = "nvim";
       PAGER = "bat -p";
       MANPAGER = "bat -p";
+
+      # Allow rust-analyzer to find the Rust source
+      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+
+      # Use our current Java version always
+      JAVA_HOME = "${pkgs.jdk17}";
     };
   };
 
