@@ -13,12 +13,14 @@ rec {
   mkDarwin = { hostname, system, user, isPersonal ? true }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
+      homedir = "/Users/${user}";
+      configdir = "${homedir}/.config";
     in
     inputs.nix-darwin.lib.darwinSystem {
       inherit system;
 
       specialArgs = {
-        inherit pkgs hostname system user isPersonal;
+        inherit pkgs hostname system user isPersonal homedir configdir;
         inherit (inputs) secrets;
       };
 
@@ -41,7 +43,7 @@ rec {
           # attributes for users it did not create, like shell.
           users.users.${user} = {
             name = user;
-            home = "/Users/${user}";
+            home = homedir;
           };
 
           # nix-darwin does not change shell of already-existing user, only
