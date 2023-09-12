@@ -8,13 +8,15 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
 
 1. Install Nix using the [Determinate Systems](https://github.com/DeterminateSystems/nix-installer) Nix installer.
 
-2. Ensure that the current user is able to clone the private secrets repo before proceeding to the
+2. Install [Homebrew](https://brew.sh) (it's only used to install Casks and Mac App Store apps, its not in the `$PATH`).
+
+3. Ensure that the current user is able to clone the private secrets repo before proceeding to the
    next step, by putting the SSH private key needed to clone the repo into `$HOME/.ssh/id_rsa`.
 
-3. Run `env FLAKE=<NAME> ./bootstrap`. After a successful bootstrap, the hostname will be updated to match
+4. Run `env FLAKE=<NAME> ./bootstrap`. After a successful bootstrap, the hostname will be updated to match
    the flake.
 
-4. Whenever you make configuration changes, run `./rebuild`. If any files are
+5. Whenever you make configuration changes, run `./rebuild`. If any files are
    reported as being in the way, move them out of the way and re-run.
 
 ### NixOS
