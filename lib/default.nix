@@ -10,7 +10,7 @@ rec {
               (attrNames (readDir path)));
 
   # Builder for a macOS system.
-  mkDarwin = { hostname, system, user }:
+  mkDarwin = { hostname, system, user, isPersonal ? true }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
     in
@@ -18,7 +18,7 @@ rec {
       inherit system;
 
       specialArgs = {
-        inherit pkgs hostname system user;
+        inherit pkgs hostname system user isPersonal;
         inherit (inputs) secrets;
       };
 
