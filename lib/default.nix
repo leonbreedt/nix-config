@@ -56,9 +56,8 @@ rec {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = false;
-            users.${user} =
+            users.${user} = pkgs.lib.recursiveUpdate
               (import ../common/home.nix { inherit pkgs configdir; })
-              //
               (import ../macos/home.nix { inherit pkgs configdir; });
           };
         }
