@@ -13,6 +13,7 @@ rec {
   mkDarwin = { hostname, system, user, isPersonal ? true }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
+      secrets = inputs.secrets;
       homedir = "/Users/${user}";
       configdir = "${homedir}/.config";
     in
@@ -20,8 +21,7 @@ rec {
       inherit system;
 
       specialArgs = {
-        inherit pkgs hostname system user isPersonal homedir configdir;
-        inherit (inputs) secrets;
+        inherit pkgs hostname system user isPersonal homedir configdir secrets;
       };
 
       modules = [
@@ -56,9 +56,18 @@ rec {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = false;
+
             users.${user} = pkgs.lib.recursiveUpdate
               (import ../common/home.nix { inherit pkgs configdir; })
-              (import ../macos/home.nix { inherit pkgs configdir; });
+              (
+                pkgs.lib.recursiveUpdate
+                  (import ../macos/home.nix { inherit pkgs configdir; })
+                  {
+                    home.file = pkgs.lib.recursiveUpdate
+                      (import ../common/files.nix { inherit secrets homedir configdir; })
+                      (import ../macos/files.nix { inherit secrets homedir configdir; });
+                  }
+              );
           };
         }
       ];
