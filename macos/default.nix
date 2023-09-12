@@ -1,6 +1,6 @@
 # macOS-specific configuration
 
-{ pkgs, lib, isPersonal, ... }:
+{ pkgs, lib, secrets, isPersonal, ... }:
 
 {
   # Enable the Nix daemon for maintenance activities.
@@ -20,6 +20,13 @@
     enable = true;
     entries = import ./dock.nix { inherit pkgs lib isPersonal; };
   };
+
+  # CA certificates
+  security.pki.certificates = [
+    (builtins.readFile ../common/config/sector42-ca.pem)
+    (builtins.readFile "${secrets}/work-root-ca-01.crt")
+    (builtins.readFile "${secrets}/work-root-ca-02.crt")
+  ];
 
   # Install fonts in font directory.
   # Font configuration uses different attributes on macOS ('fonts' instead of 'packages').
