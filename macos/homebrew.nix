@@ -25,7 +25,6 @@
     "postman"
   ];
 
-  masApps = [
-  ];
+  masApps = {};
 }
 
