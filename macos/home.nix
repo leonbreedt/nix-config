@@ -4,7 +4,7 @@
 {
   home.activation = {
     setRootCaCertificates = ''
-      sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${configdir}/ssl/certs/sector42-ca.pem
+      security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ${configdir}/ssl/certs/sector42-ca.pem
     '';
   };
 }
