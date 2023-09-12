@@ -1,5 +1,5 @@
 # Homebrew configuration for apps not available in nixpkgs.
-{isPersonal}:
+{lib, isPersonal}:
 
 {
   enable = true;

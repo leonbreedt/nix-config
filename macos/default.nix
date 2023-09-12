@@ -1,6 +1,6 @@
 # macOS-specific configuration
 
-{ pkgs, isPersonal, ... }:
+{ pkgs, lib, isPersonal, ... }:
 
 {
   # Enable the Nix daemon for maintenance activities.
@@ -13,7 +13,7 @@
   system.defaults = import ./preferences.nix;
 
   # Packages from Homebrew
-  homebrew = import ./homebrew.nix { inherit isPersonal; };
+  homebrew = import ./homebrew.nix { inherit lib isPersonal; };
 
   # Install fonts in font directory.
   # Font configuration uses different attributes on macOS ('fonts' instead of 'packages').
