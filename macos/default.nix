@@ -15,6 +15,12 @@
   # Packages from Homebrew
   homebrew = import ./homebrew.nix { inherit lib isPersonal; };
 
+  # Dock configuration
+  local.dock = {
+    enable = true;
+    entries = import ./dock.nix { inherit pkgs lib isPersonal; };
+  };
+
   # Install fonts in font directory.
   # Font configuration uses different attributes on macOS ('fonts' instead of 'packages').
   fonts = {

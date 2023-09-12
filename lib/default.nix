@@ -25,6 +25,7 @@ rec {
       modules = [
         ../common
         ../macos
+        ../macos/lib/dock.nix
 
         inputs.home-manager.darwinModules.home-manager
 
