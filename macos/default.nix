@@ -17,6 +17,7 @@
   fonts = {
     fontDir.enable = true;
     fonts = with pkgs; [
+      sf-mono
       (iosevka.override {
         privateBuildPlan = builtins.readFile ../common/config/iosevka-lb;
         set = "lb";
