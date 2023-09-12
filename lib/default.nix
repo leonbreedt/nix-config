@@ -1,7 +1,7 @@
 {inputs, ...}:
 
 rec {
-  # Loads all modules in a directory.
+  # Load all overlays.
   overlays = let
       path = ../overlays;
     in with builtins;
@@ -19,6 +19,7 @@ rec {
 
       specialArgs = {
         inherit pkgs hostname system user;
+        inherit (inputs) secrets;
       };
 
       modules = [
@@ -34,19 +35,16 @@ rec {
             ++
             (import ../macos/packages.nix { inherit pkgs; });
 
-          # Base nix-darwin user configuration,
-          # don't specify anything here other than 
-          # name and home dir, as nix-darwin will 
-          # ignore extra attributes for users it
-          # did not create
+          # Base nix-darwin user configuration, don't specify anything here
+          # other than name and home dir, as nix-darwin will ignore extra
+          # attributes for users it did not create, like shell.
           users.users.${user} = {
             name = user;
             home = "/Users/${user}";
           };
 
-          # nix-darwin does not change shell of already-existing
-          # user, only user completely managed by it, which we will
-          # never have on macOS
+          # nix-darwin does not change shell of already-existing user, only
+          # user completely managed by it, which we will never have on macOS
           system.activationScripts.postUserActivation.text = ''
             sudo chsh -s /run/current-system/sw/bin/fish ${user}
           '';

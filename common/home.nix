@@ -93,8 +93,65 @@
       };
     };
 
+    # NeoVIM
+    neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+      plugins = with pkgs; [
+        # Theme/appearance
+        vimPlugins.lightline-vim
+        customVimPlugins.catppuccin-nvim
+
+        # LSP
+        vimPlugins.nvim-lspconfig
+
+        # Language support
+        vimPlugins.rust-vim
+        vimPlugins.zig-vim
+        vimPlugins.vim-nix
+        vimPlugins.vim-fish
+
+        # completion
+        vimPlugins.cmp-nvim-lsp
+        vimPlugins.cmp-buffer
+        vimPlugins.cmp-path
+        vimPlugins.cmp-cmdline
+        vimPlugins.nvim-cmp
+        vimPlugins.cmp-vsnip
+        vimPlugins.vim-vsnip
+
+        # popups
+        vimPlugins.popfix
+        customVimPlugins.popui-nvim
+
+        # tree sitter
+        (vimPlugins.nvim-treesitter.withPlugins (plugins: with plugins; [
+          tree-sitter-c
+          tree-sitter-cpp
+          tree-sitter-go
+          tree-sitter-nix
+          tree-sitter-rust
+        ]))
+      ];
+
+      extraConfig = builtins.readFile ./config/nvim;
+
+      # Language servers
+      extraPackages = with pkgs; [
+        rust-analyzer
+        gopls
+      ];
+    };
+
     # Utils
     gpg.enable = true;
     direnv.enable = true;
+
+    # Terminal
+    wezterm = {
+      enable = true;
+      extraConfig = builtins.readFile ./config/wezterm.lua;
+    };
   };
 }
