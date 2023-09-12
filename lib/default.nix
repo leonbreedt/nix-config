@@ -57,9 +57,9 @@ rec {
             useGlobalPkgs = true;
             useUserPackages = false;
             users.${user} =
-              (import ../common/home.nix { inherit pkgs; })
+              (import ../common/home.nix { inherit pkgs configdir; })
               //
-              (import ../macos/home.nix { inherit pkgs; });
+              (import ../macos/home.nix { inherit pkgs configdir; });
           };
         }
       ];
