@@ -1,19 +1,24 @@
-{inputs, ...}:
+{inputs, lib, ...}:
 
 rec {
   # Load all overlays.
-  overlays = let
-      path = ../overlays;
-    in with builtins;
+  overlays = let path = ../overlays; in with builtins;
       map (n: import (path + ("/" + n)))
       (filter (n: match ".*\\.nix" n != null || pathExists (path + ("/" + n + "/default.nix")))
               (attrNames (readDir path)));
+
+  # Helper to export secrets as an attrset keyed by the file name.
+  # Only for secrets representable as Nix strings.
+  # keyed by the file name, having the file contents as value
+  secretsAsAttrSet = with builtins; d: mapAttrs
+      (f: _: if lib.hasSuffix "-gpg" f then (d + "/${f}") else readFile (d + "/${f}"))
+      (readDir d);
 
   # Builder for a macOS system.
   mkDarwin = { hostname, system, user, isPersonal ? true }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
-      secrets = inputs.secrets;
+      secrets = secretsAsAttrSet "${inputs.secrets}";
       homedir = "/Users/${user}";
       configdir = "${homedir}/.config";
     in

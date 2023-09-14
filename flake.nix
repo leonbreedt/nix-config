@@ -24,7 +24,10 @@
 
   outputs = {nixpkgs, nix-darwin, secrets, ...}@inputs: 
   let
-    lib = import ./lib { inherit inputs; };
+    lib = import ./lib {
+      inherit inputs;
+      inherit (nixpkgs) lib;
+    };
   in
   {
     darwinConfigurations = {

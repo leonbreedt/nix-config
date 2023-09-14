@@ -24,8 +24,8 @@
   # CA certificates
   security.pki.certificates = [
     (builtins.readFile ../common/config/sector42-ca.pem)
-    (builtins.readFile "${secrets}/work-root-ca-01.crt")
-    (builtins.readFile "${secrets}/work-root-ca-02.crt")
+    secrets.work-root-ca-01-crt
+    secrets.work-root-ca-02-crt
   ];
 
   # Install fonts in font directory.
