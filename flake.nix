@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-23.05";
+      url = "github:NixOS/nixpkgs/master";
     };
 
     nix-darwin = {
@@ -32,8 +32,11 @@
   {
     darwinConfigurations = {
       leon-vm = lib.mkDarwin {
-        system = "aarch64-darwin";
         hostname = "leon-vm";
+        user = "leon";
+      };
+      athena = lib.mkDarwin {
+        hostname = "athena";
         user = "leon";
       };
     };

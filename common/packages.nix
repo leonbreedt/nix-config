@@ -12,7 +12,7 @@ with pkgs; [
   deno
   difftastic
   du-dust
-  exa
+  eza
   fd
   fish
   flyctl
@@ -37,7 +37,7 @@ with pkgs; [
   nodejs-18_x
   openssl
   pinentry
-  pkgconfig
+  pkg-config
   pwgen
   ripgrep
   rustup

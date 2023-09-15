@@ -44,7 +44,7 @@
         alias kc kubectl
         alias cat "bat -p"
         alias less "bat -p"
-        alias ls "exa"
+        alias ls "eza"
         alias vi "nvim"
         alias vim "nvim"
         '';
