@@ -31,10 +31,6 @@
   in
   {
     darwinConfigurations = {
-      leon-vm = lib.mkDarwin {
-        hostname = "leon-vm";
-        user = "leon";
-      };
       athena = lib.mkDarwin {
         hostname = "athena";
         user = "leon";

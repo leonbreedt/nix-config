@@ -21,6 +21,8 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
 
 ### NixOS
 
+**TODO:** Below instructions are outdated and not adapted for complete flake rewrite.
+
 1. Download the [latest NixOS stable distribution](https://nixos.org/manual/nixos/stable/index.html#sec-obtaining),
    these instructions were tested with 22.11. Download the minimal distribution, not graphical.
    
@@ -62,6 +64,8 @@ Inspired by [Dustin Lyons'](https://github.com/dustinlyons/nixos-config) repo.
     in flake mode, and switch to the built configuration afterwards.
    
 ### WSL
+
+**TODO:** Below instructions are outdated and not adapted for complete flake rewrite.
 
 1. Clone this repository on an existing NixOS system, and ensure
    `nativeSystemd` is set to `false` in `wsl/default.nix`.
