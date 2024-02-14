@@ -43,6 +43,11 @@
     };
 
     nixosConfigurations = {
+      starbuck = lib.mkNixos {
+        hostname = "starbuck";
+        user = "leon";
+        isServer = true;
+      };
     };
   };
 }

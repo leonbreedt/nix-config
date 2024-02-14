@@ -14,6 +14,27 @@ rec {
       (f: _: if lib.hasSuffix "-gpg" f then (d + "/${f}") else readFile (d + "/${f}"))
       (readDir d);
 
+  # Builder for a nixOS system.
+  mkNixos = { hostname, system ? "x86_64-linux", user, isPersonal ? true, isDesktop ? true }:
+    let
+      pkgs = import inputs.nixpkgs { inherit system overlays; };
+      homedir = "/home/${user}";
+      configdir = "${homedir}/.config";
+      secrets = secretsAsAttrSet "${inputs.secrets}";
+    in
+    inputs.nixpkgs.lib.nixosSystem {
+      inherit system;
+
+      specialArgs = {
+        inherit pkgs hostname system user isPersonal isDesktop homedir configdir secrets;
+      };
+
+      modules = [
+        ../common
+        ../nixos
+      ];
+    }
+
   # Builder for a macOS system.
   mkDarwin = { hostname, system ? "aarch64-darwin", user, isPersonal ? true }:
     let
