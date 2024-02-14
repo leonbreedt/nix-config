@@ -15,7 +15,7 @@ rec {
       (readDir d);
 
   # Builder for a nixOS system.
-  mkNixos = { hostname, system ? "x86_64-linux", user, hw, isPersonal ? true, isDesktop ? true }:
+  mkNixos = { hostname, system ? "x86_64-linux", user, hw, isPersonal ? true, isDesktop ? true, isWSL ? false, enableDocker ? false, isUnifiController ? false }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
       homedir = "/home/${user}";

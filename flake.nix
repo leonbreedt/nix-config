@@ -46,8 +46,9 @@
       starbuck = lib.mkNixos {
         hostname = "starbuck";
         user = "leon";
-        isServer = true;
         hw = ./hw/starbuck.nix;
+        isDesktop = false;
+        isUnifiController = true;
       };
     };
   };
