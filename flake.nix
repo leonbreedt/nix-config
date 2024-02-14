@@ -47,6 +47,7 @@
         hostname = "starbuck";
         user = "leon";
         isServer = true;
+        hw = ./hw/starbuck.nix;
       };
     };
   };

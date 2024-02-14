@@ -15,7 +15,7 @@ rec {
       (readDir d);
 
   # Builder for a nixOS system.
-  mkNixos = { hostname, system ? "x86_64-linux", user, isPersonal ? true, isDesktop ? true }:
+  mkNixos = { hostname, system ? "x86_64-linux", user, hw, isPersonal ? true, isDesktop ? true }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
       homedir = "/home/${user}";
@@ -32,6 +32,25 @@ rec {
       modules = [
         ../common
         ../nixos
+        hw
+        home-manager.nixosModules.home-manager {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+
+            users.${user} = pkgs.lib.recursiveUpdate
+            (import ../common/home.nix { inherit secrets pkgs configdir isPersonal isDesktop; })
+            (
+              pkgs.lib.recursiveUpdate
+              (import ../nixos/home.nix { inherit secrets pkgs configdir isPersonal isDesktop; })
+              {
+                home.file = pkgs.lib.recursiveUpdate
+                (import ../common/files.nix { inherit secrets homedir configdir; })
+                (import ../nixos/files.nix { inherit secrets homedir configdir; });
+              }
+              );
+            };
+          }
       ];
     }
 
