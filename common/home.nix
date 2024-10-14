@@ -51,6 +51,7 @@
         alias ls "eza"
         alias vi "nvim"
         alias vim "nvim"
+        alias sudo "/run/wrappers/bin/sudo"
 
         # terminal_appearance set by wezterm
         if [ "$terminal_appearance" = "light" ]
