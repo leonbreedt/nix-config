@@ -62,6 +62,7 @@ with pkgs; [
   terraform
   tree
   tmux
+  typst
   unrar
   unzip
   vault
