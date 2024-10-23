@@ -13,7 +13,7 @@
       EDITOR = "nvim";
       PAGER = "bat -p";
       MANPAGER = "bat -p";
-      EXA_ICON_SPACING = "1";
+      EXA_ICON_SPACING = "2";
 
       # Allow rust-analyzer to find the Rust source
       RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
