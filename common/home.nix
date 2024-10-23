@@ -13,6 +13,7 @@
       EDITOR = "nvim";
       PAGER = "bat -p";
       MANPAGER = "bat -p";
+      EXA_ICON_SPACING = "1";
 
       # Allow rust-analyzer to find the Rust source
       RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
@@ -48,7 +49,7 @@
         alias kc kubectl
         alias cat "bat -p"
         alias less "bat -p"
-        alias ls "eza"
+        alias ls "eza --icons"
         alias vi "nvim"
         alias vim "nvim"
         alias sudo "/run/wrappers/bin/sudo"
