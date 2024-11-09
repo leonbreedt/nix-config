@@ -108,6 +108,10 @@
         }
       ];
       extraConfig = {
+        core.pager = "delta";
+        interactive.diffFilter = "delta --color-only";
+        delta.navigate = true;
+        merge.conflictstyle = "zdiff3";
         branch.autosetuprebase = "always";
         color.ui = true;
         color.diff = "auto";
