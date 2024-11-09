@@ -12,6 +12,7 @@ with pkgs; [
   coding-fonts
   cloudfoundry-cli
   curl
+  delta
   deno
   difftastic
   du-dust
