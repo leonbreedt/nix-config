@@ -58,6 +58,11 @@
         useX11 = true;
         useGnome = true;
       };
+
+      starbuck = lib.mkNixos {
+        hostname = "starbuck";
+        user = "leon";
+      };
     };
   };
 }
