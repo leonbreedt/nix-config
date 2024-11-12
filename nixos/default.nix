@@ -1,4 +1,4 @@
-{ lib, pkgs, hostname, secrets, user, useX11, useGnome, isPersonal, ... }:
+{ lib, pkgs, hostname, secrets, user, useX11, useGnome, isUnifiController, isPersonal, ... }:
 
 {
   imports = [
@@ -79,7 +79,14 @@
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 22 2375 ];
+    allowedTCPPorts = [ 22 2375 ]
+      ++ lib.optionals isUnifiController [ 8080 8443 8880 8843 ];
+    allowedUDPPorts = [] 
+      ++ lib.optionals isUnifiController [ 3478 10001 ];
+  };
+
+  networking.nat = {
+    enable = isUnifiController;
   };
 
   # custom fonts
@@ -144,6 +151,12 @@
 
   # Gaming!
   programs.steam.enable = useX11 && isPersonal;
+
+  # Unifi if the controller server.
+  services.unifi = {
+    enable = isUnifiController;
+    unifiPackage = pkgs.unifi8;
+  };
  
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions

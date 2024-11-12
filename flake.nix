@@ -11,7 +11,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    home-manager = {
+   home-manager = {
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -62,6 +62,7 @@
       starbuck = lib.mkNixos {
         hostname = "starbuck";
         user = "leon";
+        isUnifiController = true;
       };
     };
   };
