@@ -182,6 +182,16 @@ ${pkgs.tarsnap}/bin/tarsnap \
 '';
           }} && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/${tarsnapHealthCheckUUID} >/dev/null
         ''
+      ] ++ lib.optionals isUnifiController [
+        ''
+          * * * * * root ${pkgs.moreutils}/bin/chronic bash -c '${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://formdt1.com/products/t1titanium | grep Restocking' && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/020e434c-a24c-43a8-bfaa-7a403f53c916 >/dev/null
+        ''
+        ''
+          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s sector42.io -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/5629ec4f-d2b8-43e6-8328-9f43d1e10464 >/dev/null
+        ''
+        ''
+          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
+        ''
       ];
   };
  
