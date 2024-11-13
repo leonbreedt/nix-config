@@ -78,7 +78,7 @@ rec {
     };
 
     # Builder for a WSL system
-    mkWsl = { hostname, system ? "x86_64-linux", user, isPersonal ? true, useX11 ? false, isUnifiController ? false }:
+    mkWsl = { hostname, system ? "x86_64-linux", user, isPersonal ? true, useX11 ? false, isUnifiController ? false, tarsnapBackups ? false, tarsnapHealthCheckUUID ? "", tarsnapDirs ? [], tarsnapKey ? "" }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
       secrets = secretsAsAttrSet "${inputs.secrets}";
@@ -91,7 +91,7 @@ rec {
       inherit system;
 
       specialArgs = {
-        inherit pkgs hostname system user isPersonal homedir configdir secrets isWsl useX11 useGnome isUnifiController;
+        inherit pkgs hostname system user isPersonal homedir configdir secrets isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey;
       };
 
       modules = [
@@ -106,9 +106,9 @@ rec {
         {
           # System packages
           environment.systemPackages =
-            (import ../common/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController; })
+            (import ../common/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
             ++
-            (import ../nixos/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController; });
+            (import ../nixos/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
 
           # Standard nixOS managed user configuration
           users.users.${user} = {
@@ -125,14 +125,14 @@ rec {
             useUserPackages = false;
 
             users.${user} = pkgs.lib.recursiveUpdate
-              (import ../common/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController; })
+              (import ../common/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
               (
                 pkgs.lib.recursiveUpdate
-                  (import ../nixos/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController; })
+                  (import ../nixos/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
                   {
                     home.file = pkgs.lib.recursiveUpdate
-                      (import ../common/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController; })
-                      (import ../nixos/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController; });
+                      (import ../common/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
+                      (import ../nixos/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
                   }
               );
           };
@@ -141,7 +141,7 @@ rec {
     };
 
     # Builder for a NixOS system
-    mkNixos = { hostname, system ? "x86_64-linux", user, isPersonal ? true, useX11 ? false, useGnome ? false, isUnifiController ? false }:
+    mkNixos = { hostname, system ? "x86_64-linux", user, isPersonal ? true, useX11 ? false, useGnome ? false, isUnifiController ? false, tarsnapBackups ? false, tarsnapHealthCheckUUID ? "", tarsnapDirs ? [], tarsnapKey ? "" }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
       secrets = secretsAsAttrSet "${inputs.secrets}";
@@ -153,7 +153,7 @@ rec {
       inherit system;
 
       specialArgs = {
-        inherit pkgs hostname system user isPersonal homedir configdir secrets isWsl useX11 useGnome isUnifiController;
+        inherit pkgs hostname system user isPersonal homedir configdir secrets isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey;
       };
 
       modules = [
@@ -166,9 +166,9 @@ rec {
         {
           # System packages
           environment.systemPackages =
-            (import ../common/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController; })
+            (import ../common/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
             ++
-            (import ../nixos/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController; });
+            (import ../nixos/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
 
           # Standard nixOS managed user configuration
           users.users.${user} = {
@@ -177,7 +177,7 @@ rec {
             name = user;
             home = homedir;
             shell = pkgs.fish;
-	        openssh.authorizedKeys.keys = [ secrets.ssh-authorized-key ];
+            openssh.authorizedKeys.keys = [ secrets.ssh-authorized-key ];
           };
 
           home-manager = {
@@ -185,14 +185,14 @@ rec {
             useUserPackages = false;
 
             users.${user} = pkgs.lib.recursiveUpdate
-              (import ../common/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController; })
+              (import ../common/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
               (
                 pkgs.lib.recursiveUpdate
-                  (import ../nixos/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController; })
+                  (import ../nixos/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
                   {
                     home.file = pkgs.lib.recursiveUpdate
-                      (import ../common/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController; })
-                      (import ../nixos/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController; });
+                      (import ../common/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
+                      (import ../nixos/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
                   }
               );
           };

@@ -57,12 +57,17 @@
         user = "leon";
         useX11 = true;
         useGnome = true;
+        tarsnapBackups = true;
       };
 
       starbuck = lib.mkNixos {
         hostname = "starbuck";
         user = "leon";
         isUnifiController = true;
+        tarsnapBackups = true;
+        tarsnapDirs = [ "/etc" "/root" "/var/lib/unifi/data/sites" "/var/lib/unifi/data/backup" ];
+        tarsnapHealthCheckUUID = builtins.readFile "${secrets}/personal-controller-tarsnap-hc-uuid";
+        tarsnapKey = builtins.readFile "${secrets}/tarsnap-starbuck-key";
       };
     };
   };

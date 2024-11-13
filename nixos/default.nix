@@ -1,4 +1,4 @@
-{ lib, pkgs, hostname, secrets, user, useX11, useGnome, isUnifiController, isPersonal, ... }:
+{ lib, pkgs, hostname, secrets, user, useX11, useGnome, isUnifiController, isPersonal, tarsnapBackups, tarsnapHealthCheckUUID, tarsnapDirs, tarsnapKey, ... }:
 
 {
   imports = [
@@ -140,7 +140,7 @@
   # to use bspwm
   services.xserver.windowManager.bspwm = {
     enable = false;
-  };
+};
 
   # Better support for general peripherals
   services.libinput = {
@@ -152,10 +152,37 @@
   # Gaming!
   programs.steam.enable = useX11 && isPersonal;
 
-  # Unifi if the controller server.
+  # Enable Unifi if this is a controller.
   services.unifi = {
     enable = isUnifiController;
     unifiPackage = pkgs.unifi8;
+  };
+
+  # Enable cron for machines where we want tarsnap backups.
+  services.cron = {
+    enable = true;
+
+    systemCronJobs = 
+      lib.optionals tarsnapBackups [
+        ''
+          1 3 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.writeTextFile {
+            name = "tarsnap-backup.sh";
+            executable = true;
+            text = ''
+${pkgs.tarsnap}/bin/tarsnap \
+  -c \
+  --keyfile ${pkgs.writeTextFile {
+    name = "tarsnap.key";
+    executable = false;
+    text = tarsnapKey;
+  }} \
+  --cachedir /var/cache/tarsnap \
+  -f "$(uname -n)-$(date +%Y-%m-%d_%H-%M-%S)" \
+  ${lib.concatStringsSep " \\\n" tarsnapDirs}
+'';
+          }} && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/${tarsnapHealthCheckUUID} >/dev/null
+        ''
+      ];
   };
  
   # This value determines the NixOS release from which the default

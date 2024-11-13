@@ -1,7 +1,7 @@
 { lib, stdenvNoCC, fetchurl, unzip, p7zip }:
 
 stdenvNoCC.mkDerivation rec {
-  pname = "sf-prfo";
+  pname = "sf-pro";
   version = "1";
 
   src = fetchurl {
