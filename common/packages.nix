@@ -45,7 +45,7 @@ with pkgs; [
   nodePackages."@tailwindcss/language-server"
   nodePackages.typescript-language-server
   pyright
-  nodejs-18_x
+  nodejs-20_x
   openssl
   pkg-config
   protobuf
