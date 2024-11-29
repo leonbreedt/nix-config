@@ -70,6 +70,7 @@ with pkgs; [
   wrk
   xsv
   xh
+  xq
   yq
   zig
   zls
