@@ -189,6 +189,9 @@ ${pkgs.tarsnap}/bin/tarsnap \
         ''
           1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
         ''
+        ''
+          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.bash} /home/leon/teslamate/bin/health.sh && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/32aa4c5a-6f71-495e-b3ee-82045498d0c0 >/dev/null
+        ''
       ];
   };
  
