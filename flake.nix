@@ -65,7 +65,7 @@
         user = "leon";
         isUnifiController = true;
         tarsnapBackups = true;
-        tarsnapDirs = [ "/etc" "/root" "/var/lib/unifi/data/sites" "/var/lib/unifi/data/backup" ];
+        tarsnapDirs = [ "/etc" "/root" "/var/lib/unifi/data/sites" "/var/lib/unifi/data/backup" "/home/leon/teslamate" ];
         tarsnapHealthCheckUUID = builtins.readFile "${secrets}/personal-controller-tarsnap-hc-uuid";
         tarsnapKey = builtins.readFile "${secrets}/tarsnap-starbuck-key";
       };
