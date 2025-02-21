@@ -8,8 +8,10 @@ FLAKE_DIR=$(cd "$(dirname "$0")"; pwd)
 macos() {
   host="$(hostname)"
   FLAKE="${FLAKE:-$host}"
+  system="darwinConfigurations.$FLAKE.system"
 
   echo "rebuilding: on macOS"
+  nix --experimental-features 'nix-command flakes' build "${FLAKE_DIR}#$system" --impure $@
   ./result/sw/bin/darwin-rebuild switch --flake .#$FLAKE --impure $@
   rm -rf ./result
 }
