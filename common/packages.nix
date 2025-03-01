@@ -1,27 +1,35 @@
-# Common packages installed on all systems
+# Common packages. Some systems may not have all packages (e.g. routers/firewalls).
 
-{ pkgs, isPersonal, tarsnapBackups, ... }:
+{ pkgs, config, ... }:
 
 with pkgs; [
-  awscli2
   bat
-  bazel
-  bun
   btop
+  eza
+  fd
+  fish
+  fzf
+  htop
+  inetutils
+  openssl
+  pwgen
+  ripgrep
+  tree
+  tmux
+] ++ lib.optionals (config.machine.kind == "edge-router") [
+  nmap
+] ++ lib.optionals (config.machine.kind == "unifi-controller") [
+] ++ lib.optionals (config.machine.kind == "development-machine") [
+  awscli2
+  bun
   cascadia-code
   coding-fonts
-  cloudfoundry-cli
   curl
   delta
   deno
   difftastic
   du-dust
-  eza
   fastfetch
-  fd
-  fish
-  flyctl
-  fzf
   geist-mono
   gh
   graphviz
@@ -29,8 +37,6 @@ with pkgs; [
   gnupg
   go
   gopls
-  htop
-  inetutils
   intel-one-mono
   jdk17
   jetbrains-mono
@@ -40,30 +46,17 @@ with pkgs; [
   maven
   macchina
   neofetch
-  nmap
   nodePackages."@angular/cli"
   nodePackages."@tailwindcss/language-server"
   nodePackages.typescript-language-server
   pyright
   nodejs_20
-  openssl
   pkg-config
-  protobuf
   python311Full
-  pwgen
-  ripgrep
-  ruby_3_3
-  rubyPackages_3_3.solargraph
-  rustup
-  rust-cbindgen
-  shellcheck
   sf-mono
-  step-cli
+  shellcheck
   sqlite
   terraform
-  tree
-  tmux
-  typst
   unrar
   unzip
   vault
@@ -71,12 +64,20 @@ with pkgs; [
   xsv
   xh
   yq
+  zip
+] ++ lib.optionals (config.machine.kind == "development-machine" && config.machine.personal) [
+  flyctl
+  protobuf
+  ruby_3_3
+  rubyPackages_3_3.solargraph
+  rustup
+  rust-cbindgen
+  step-cli
+  typst
   zig
   zls
-  zip
-] ++ lib.optionals isPersonal [
-  localstack
-] ++ lib.optionals (!isPersonal) [
+] ++ lib.optionals (config.machine.kind == "development-machine" && !config.machine.personal) [
+  cloudfoundry-cli
   chromedriver
   vscode
 ]

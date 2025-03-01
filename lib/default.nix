@@ -141,7 +141,7 @@ rec {
     };
 
     # Builder for a NixOS system
-    mkNixos = { hostname, system ? "x86_64-linux", user, isPersonal ? true, useX11 ? false, useGnome ? false, isUnifiController ? false, tarsnapBackups ? false, tarsnapHealthCheckUUID ? "", tarsnapDirs ? [], tarsnapKey ? "" }:
+    mkNixos = { hostname, system ? "x86_64-linux", user ? "leon", isPersonal ? true, useX11 ? false, useGnome ? false, isUnifiController ? false, tarsnapBackups ? false, tarsnapHealthCheckUUID ? "", tarsnapDirs ? [], tarsnapKey ? "" }:
     let
       pkgs = import inputs.nixpkgs { inherit system overlays; };
       secrets = secretsAsAttrSet "${inputs.secrets}";
@@ -157,9 +157,9 @@ rec {
       };
 
       modules = [
+        ../hw/${hostname}.nix
         ../common
         ../nixos
-        ../hw/${hostname}.nix
 
         inputs.home-manager.nixosModules.home-manager
 
