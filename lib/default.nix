@@ -16,7 +16,6 @@ rec {
 
   # Builder for a NixOS system.
   mkNixos = {
-      
       hostname,
       system ? "x86_64-linux",
       user ? "leon",
@@ -32,7 +31,7 @@ rec {
         key = "";
         healthcheck = "";
       },
-     }: 
+    }: 
     let
       secretsAttrSet = secretsAsAttrSet "${inputs.secrets}";
       pkgsWithOverlays = import inputs.nixpkgs { inherit system overlays; };
@@ -136,6 +135,7 @@ rec {
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = false;
+	    backupFileExtension = "backup";
 
             users.${user} = lib.recursiveUpdate
               (import ../common/home.nix { inherit pkgs lib config secrets; })

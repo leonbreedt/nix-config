@@ -1,8 +1,9 @@
 # nixOS-specific user configuration
-{ config, ... }:
+{ config, lib, ... }:
 
 let
   useBspwm = config.machine.gui.enabled && config.machine.environment == "bspwm"; 
+  useGnome = config.machine.gui.enabled && config.machine.environment == "gnome";
 in
 {
   xsession.windowManager.bspwm = {
@@ -123,7 +124,7 @@ in
   };
 
   # DConf settings
-  dconf.settings = {
+  dconf.settings = lib.optionalAttrs useGnome {
     "org/gnome/desktop/interface" = {
       font-name = "Overpass Semi-Bold 10";
       font-hinting = "medium";
