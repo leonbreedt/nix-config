@@ -1,48 +1,57 @@
-{ lib, pkgs, hostname, secrets, user, useX11, useGnome, isUnifiController, isPersonal, tarsnapBackups, tarsnapHealthCheckUUID, tarsnapDirs, tarsnapKey, ... }:
+{ pkgs, lib, config, secrets, ... }:
 
+let
+  isEdgeRouter = config.machine.kind == "edge-router";
+  isDevelopmentMachine = config.machine.kind == "development-machine";
+  isUnifiController = config.machine.kind == "unifi-controller";
+  isDockerEnabled = isDevelopmentMachine;
+  isPersonal = config.machine.personal;
+  useX11 = config.machine.gui.enabled;
+  useBspwm = useX11 && config.machine.gui.environment == "bspwm";
+  useGnome = useX11 && config.machine.gui.environment == "gnome";
+in
 {
-  imports = [
-    ../common
-  ];
+  nix.settings.allowed-users = [ "${config.machine.user}" ];
 
-  nix = {
-    settings.allowed-users = [ "${user}" ];
+  # Networking
+
+  networking = {
+    hostName = config.machine.hostname;
+    enableIPv6 = false;
+    firewall = {
+      enable = isEdgeRouter;
+      allowedTCPPorts = [ 22 ] ++ lib.optionals isDockerEnabled [ 2375 ];
+    };
+    nat = {
+      enable = isEdgeRouter;
+    };
   };
 
-  time.timeZone = "Pacific/Auckland";
+  # Base programs
 
-  # The global useDHCP flag is deprecated, therefore explicitly set to false here.
-  networking.hostName = hostname;
-  networking.useDHCP = false;
-
-  # IPv6, yech.
-  networking.enableIPv6 = false;
-
-  # Remember GnuPG passwords.
-  programs.gnupg.agent.enable = true;
-
-  # Needed both here and in home-manager.
-  programs.fish.enable = true;
-
-  # Local mail (e.g. cron jobs)
-  programs.msmtp = {
-    enable = true;
-    defaults = {
-      aliases = "/etc/aliases";
-    };
-    accounts = {
-      default = {
-        from = "noreply@sector42.io";
-        auth = true;
-        tls = true;
-        host = "smtp.gmail.com";
-        port = "587";
-        syslog = true;
-        user = secrets.smtp-user;
-        password = secrets.smtp-password;
+  programs = {
+    gnupg.agent.enable = true;
+    fish.enable = true;
+    msmtp = {
+      enable = true;
+      defaults = {
+        aliases = "/etc/aliases";
+      };
+      accounts = {
+        default = {
+          from = "noreply@sector42.io";
+          auth = true;
+          tls = true;
+          host = "smtp.gmail.com";
+          port = "587";
+          syslog = true;
+          user = secrets.smtp-user;
+          password = secrets.smtp-password;
+        };
       };
     };
   };
+
   environment.etc = {
     "aliases" = {
       text = ''
@@ -54,15 +63,54 @@
     };
   };
 
+  # Services
+
   services.openssh = {
     enable = true;
     settings.PasswordAuthentication = false;
     settings.PermitRootLogin = "no";
   };
 
-  # Support Docker
-  virtualisation.docker = {
+  services.unifi = {
+    enable = isUnifiController;
+    unifiPackage = pkgs.unifi8;
+  };
+
+  services.cron = {
     enable = true;
+
+    systemCronJobs = 
+      lib.optionals config.machine.tarsnap.enabled [
+        ''
+          1 3 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.writeTextFile {
+            name = "tarsnap-backup.sh";
+            executable = true;
+            text = ''
+${pkgs.tarsnap}/bin/tarsnap \
+  -c \
+  --keyfile ${pkgs.writeTextFile {
+    name = "tarsnap.key";
+    executable = false;
+    text = config.machine.tarsnap.key;
+  }} \
+  --cachedir /var/cache/tarsnap \
+  -f "$(uname -n)-$(date +%Y-%m-%d_%H-%M-%S)" \
+  ${lib.concatStringsSep " \\\n" config.machine.tarsnap.dirs}
+'';
+          }} && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/${config.machine.tarsnap.healthcheck} >/dev/null
+        ''
+      ] ++ lib.optionals isUnifiController [
+        ''
+          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s sector42.io -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/5629ec4f-d2b8-43e6-8328-9f43d1e10464 >/dev/null
+        ''
+        ''
+          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
+        ''
+      ];
+  };
+
+  virtualisation.docker = {
+    enable = isDevelopmentMachine;
     listenOptions = [
       "0.0.0.0:2375"
       "/run/docker.sock"
@@ -70,26 +118,9 @@
     logDriver = "json-file";
   };
 
-  environment.systemPackages = with pkgs; [
-    inetutils
-    moreutils
-    tarsnap
-    ssl-cert-check
-  ];
+  # GUI
+  services.xserver.enable = useX11;
 
-  networking.firewall = {
-    enable = true;
-    allowedTCPPorts = [ 22 2375 ]
-      ++ lib.optionals isUnifiController [ 8080 8443 8880 8843 ];
-    allowedUDPPorts = [] 
-      ++ lib.optionals isUnifiController [ 3478 10001 ];
-  };
-
-  networking.nat = {
-    enable = isUnifiController;
-  };
-
-  # custom fonts
   fonts = {
     fontDir.enable = useX11;
     packages = with pkgs; lib.optionals useX11 [
@@ -106,27 +137,19 @@
     ];
   };
 
-  # X11
-  services.xserver.enable = useX11;
-
-  # to use bspwm
-  #services.displayManager.defaultSession = "none+bspwm";
-
-  # to use gnome
   services.xserver.displayManager.gdm = {
-    enable = useX11 && useGnome;
+    enable = useGnome;
     # use Xorg, not Wayland
     wayland = false;
     settings.daemon.DefaultSession = "gnome-xorg.desktop";
   };
-  services.xserver.desktopManager.gnome.enable = useX11 && useGnome;
-  programs.dconf.enable = true;
+  services.xserver.desktopManager.gnome.enable = useGnome;
+  programs.dconf.enable = useGnome;
 
-  # to use lightdm when using bspwm
   services.xserver.displayManager.lightdm = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     greeters.slick = {
-      enable = useX11 && !useGnome;
+      enable = useBspwm;
       font.name = "IosevkaLB 12";
       cursorTheme.size = 48;
       extraConfig = ''
@@ -137,66 +160,16 @@
     background = ../common/config/wallpaper/color-wave-1.jpg;
   };
 
-  # to use bspwm
   services.xserver.windowManager.bspwm = {
-    enable = false;
-};
+    enable = useBspwm;
+  };
 
-  # Better support for general peripherals
   services.libinput = {
     enable = useX11;
-    # macOS for lyfe
     touchpad.naturalScrolling = true;
   };
 
-  # Gaming!
   programs.steam.enable = useX11 && isPersonal;
 
-  # Enable Unifi if this is a controller.
-  services.unifi = {
-    enable = isUnifiController;
-    unifiPackage = pkgs.unifi8;
-  };
-
-  # Enable cron for machines where we want tarsnap backups.
-  services.cron = {
-    enable = true;
-
-    systemCronJobs = 
-      lib.optionals tarsnapBackups [
-        ''
-          1 3 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.writeTextFile {
-            name = "tarsnap-backup.sh";
-            executable = true;
-            text = ''
-${pkgs.tarsnap}/bin/tarsnap \
-  -c \
-  --keyfile ${pkgs.writeTextFile {
-    name = "tarsnap.key";
-    executable = false;
-    text = tarsnapKey;
-  }} \
-  --cachedir /var/cache/tarsnap \
-  -f "$(uname -n)-$(date +%Y-%m-%d_%H-%M-%S)" \
-  ${lib.concatStringsSep " \\\n" tarsnapDirs}
-'';
-          }} && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/${tarsnapHealthCheckUUID} >/dev/null
-        ''
-      ] ++ lib.optionals isUnifiController [
-        ''
-          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s sector42.io -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/5629ec4f-d2b8-43e6-8328-9f43d1e10464 >/dev/null
-        ''
-        ''
-          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
-        ''
-      ];
-  };
- 
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It's perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.05";
+  system.stateVersion = "24.11";
 }

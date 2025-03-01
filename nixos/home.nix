@@ -1,9 +1,12 @@
-# nixOS-specific user configuration
-{ pkgs, homedir, isWsl, useX11, useGnome, ... }:
+{ config, homedir, ... }:
 
+# nixOS-specific user configuration
+let
+  useBspwm = config.machine.gui.enabled && config.machine.environment == "bspwm"; 
+in
 {
   xsession.windowManager.bspwm = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     monitors = {
       "DP-2" = [ "1" "2" "3" "4" "5" "6" "7" "8" "9" ];
     };
@@ -28,7 +31,7 @@
 
   # compositor
   services.picom = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     shadow = true;
 
     settings = {
@@ -40,7 +43,7 @@
 
   # utility toolbars
   services.polybar = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     config = ./config/polybar;
     script = ''
       polybar desktop &
@@ -52,14 +55,14 @@
 
   # rofi
   programs.rofi = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     font = "IosevkaLB 12";
     theme = "paper-float";
   };
 
   # keyboard shortcuts
   services.sxhkd = {
-    enable = useX11 && !useGnome;
+    enable = useBspwm;
     keybindings = {
       "super + Return" = "wezterm";
       "super + @space" = "rofi -show run";

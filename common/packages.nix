@@ -11,14 +11,17 @@ with pkgs; [
   fzf
   htop
   inetutils
+  moreutils
   openssl
   pwgen
   ripgrep
+  tarsnap
   tree
   tmux
 ] ++ lib.optionals (config.machine.kind == "edge-router") [
   nmap
 ] ++ lib.optionals (config.machine.kind == "unifi-controller") [
+  ssl-cert-check
 ] ++ lib.optionals (config.machine.kind == "development-machine") [
   awscli2
   bun
