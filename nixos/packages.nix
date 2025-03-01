@@ -1,8 +1,8 @@
 # nixOS-specific packages
-{ pkgs, useX11, useGnome, ... }:
+{ pkgs, config, ... }:
 
 with pkgs; [
-] ++ lib.optionals useX11 [
+] ++ lib.optionals config.machine.gui.enabled [
   feh
   scrot
   ucs-fonts
@@ -11,7 +11,7 @@ with pkgs; [
   google-chrome
   firefox
   zed-editor
-] ++ lib.optionals useGnome [
+] ++ lib.optionals (config.machine.gui.environment == "gnome") [
   gnome.gnome-tweaks
   gnome.epiphany
   gnome.yelp

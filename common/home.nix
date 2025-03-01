@@ -1,9 +1,14 @@
 # Common Home Manager configuration
-{ pkgs, secrets, ... }:
+{ pkgs, config, secrets, ... }:
 
+let
+  isDevelopmentMachine = config.machine.kind == "development-machine";
+  isUnifiController = config.machine.kind == "unifi-controller";
+  useX11 = config.machine.gui.enabled;
+in
 {
   home = {
-    stateVersion = "24.05";
+    stateVersion = "24.11";
 
     sessionVariables = {
       TERM = "xterm-256color";
@@ -16,17 +21,17 @@
       EXA_ICON_SPACING = "2";
 
       # Allow rust-analyzer to find the Rust source
-      RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+      RUST_SRC_PATH = if isDevelopmentMachine then "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}" else "";
 
       # Use our current Java version always
-      JAVA_HOME = "${pkgs.jdk17}";
+      JAVA_HOME = if isDevelopmentMachine || isUnifiController then "${pkgs.jdk17}" else "";
 
       # use HiDPI for GDK/GTK apps
-      GDK_SCALE = "2";
+      GDK_SCALE = if useX11 then "2" else "";
     };
   };
 
-  # Set up Home Manager programs (independent of nix-darwin programs!)
+  # Set up Home Manager programs (independent of nix programs!)
   programs = {
     # Shell
     fish = {
@@ -54,13 +59,6 @@
         alias vim "nvim"
         if test -x /run/wrappers/bin/sudo
           alias sudo "/run/wrappers/bin/sudo"
-        end
-
-        # terminal_appearance set by wezterm
-        if [ "$terminal_appearance" = "light" ]
-            set -g theme_color_scheme "light"
-        else
-            set -g theme_color_scheme "dark"
         end
 
         set -g fish_color_autosuggestion 6c6c6c
@@ -139,7 +137,7 @@
         # Theme/appearance
         vimPlugins.lightline-vim
         customVimPlugins.catppuccin-nvim
-
+      ] ++ lib.optionals isDevelopmentMachine [
         # LSP
         vimPlugins.nvim-lspconfig
 
@@ -175,7 +173,7 @@
       extraConfig = builtins.readFile ./config/nvim;
 
       # Language servers
-      extraPackages = with pkgs; [
+      extraPackages = with pkgs; lib.optionals isDevelopmentMachine [
         rust-analyzer
         gopls
       ];
@@ -187,7 +185,7 @@
 
     # Terminal
     wezterm = {
-      enable = true;
+      enable = useX11;
       extraConfig = builtins.readFile ./config/wezterm.lua;
     };
   };

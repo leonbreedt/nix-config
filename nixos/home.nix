@@ -1,6 +1,6 @@
-{ config, homedir, ... }:
-
 # nixOS-specific user configuration
+{ config, ... }:
+
 let
   useBspwm = config.machine.gui.enabled && config.machine.environment == "bspwm"; 
 in
@@ -131,8 +131,8 @@ in
       color-scheme = "prefer-dark";
     };
     "org/gnome/desktop/background" = {
-      picture-uri = "file://${homedir}/.wallpaper";
-      picture-uri-dark = "file://${homedir}/.wallpaper";
+      picture-uri = "file://${config.machine.homedir}/.wallpaper";
+      picture-uri-dark = "file://${config.machine.homedir}/.wallpaper";
     };
     "org/gnome/shell" = {
       disable-user-extensions = false;

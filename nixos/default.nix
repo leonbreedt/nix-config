@@ -11,12 +11,9 @@ let
   useGnome = useX11 && config.machine.gui.environment == "gnome";
 in
 {
-  nix.settings.allowed-users = [ "${config.machine.user}" ];
-
   # Networking
 
   networking = {
-    hostName = config.machine.hostname;
     enableIPv6 = false;
     firewall = {
       enable = isEdgeRouter;

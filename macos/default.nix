@@ -5,6 +5,7 @@
 {
   # Enable the Nix daemon for maintenance activities.
   services.nix-daemon.enable = true;
+  nix.settings.allow-users = [ config.machine.user ];
 
   # Enable Redis on work machines.
   services.redis.enable = !isPersonal;

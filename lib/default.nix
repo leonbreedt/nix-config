@@ -14,6 +14,146 @@ rec {
       (f: _: if lib.hasSuffix "-gpg" f then (d + "/${f}") else readFile (d + "/${f}"))
       (readDir d);
 
+  # Builder for a NixOS system.
+  mkNixos = {
+      
+      hostname,
+      system ? "x86_64-linux",
+      user ? "leon",
+      kind ? "minimal",
+      personal ? true,
+      gui ? {
+        enabled = false;
+        environment = "bspwm";
+      },
+      tarsnap ? {
+        enabled = false;
+        dirs = [];
+        key = "";
+        healthcheck = "";
+      },
+     }: 
+    let
+      secretsAttrSet = secretsAsAttrSet "${inputs.secrets}";
+      pkgsWithOverlays = import inputs.nixpkgs { inherit system overlays; };
+      homedir = "/home/${user}";
+    in
+    inputs.nixpkgs.lib.nixosSystem {
+      system = system;
+      modules = [
+        ../hw/${hostname}.nix
+        ../common
+        ../nixos
+  
+        # Creates options for machine-specific configuration, which can
+        # later be referenced in other modules using config.machine.NAME.
+        ({ lib, ... }: {
+          options.machine = {
+            hostname = lib.mkOption {
+              type = lib.types.str;
+              default = hostname;
+            };
+            user = lib.mkOption {
+              type = lib.types.str;
+              default = user;
+            };
+            homedir = lib.mkOption {
+              type = lib.types.str;
+              default = homedir;
+            };
+            kind = lib.mkOption {
+              type = lib.types.enum [ "development-machine" "edge-router" "unifi-controller" "minimal" ];
+              default = kind;
+            };
+	    personal = lib.mkOption {
+              type = lib.types.bool;
+              default = personal;
+            };
+            gui = {
+              enabled = lib.mkOption {
+                type = lib.types.bool;
+                default = gui.enabled;
+              };
+              environment = lib.mkOption {
+                type = lib.types.enum [ "bspwm" "gnome" ];
+                default = gui.environment;
+              };
+            };
+            tarsnap = {
+              enabled = lib.mkOption {
+                type = lib.types.bool;
+                default = tarsnap.enabled;
+              };
+              dirs = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = tarsnap.dirs;
+              };
+              key = lib.mkOption {
+                type = lib.types.str;
+                default = tarsnap.key;
+              };
+              healthcheck = lib.mkOption {
+                type = lib.types.str;
+                default = tarsnap.healthcheck;
+              };
+            };
+          };
+        })
+
+        # Give all modules access to secrets without explicitly specifying it.
+        {
+          _module.args = { pkgs = inputs.nixpkgs.lib.mkDefault pkgsWithOverlays; secrets = secretsAttrSet; };
+        }
+
+        # Import the Home Manager module
+        inputs.home-manager.nixosModules.home-manager
+
+        # Merge common and nixOS specific configuration
+        ({ pkgs, lib, config, ... }:
+        let
+          pkgs = pkgsWithOverlays;
+          secrets = secretsAttrSet;
+        in {
+          # Installed packages
+          environment.systemPackages = 
+            (import ../common/packages.nix { inherit pkgs lib config secrets; })
+            ++
+            (import ../nixos/packages.nix { inherit pkgs lib config secrets; });
+
+          # Standard nixOS managed user configuration. Home Manager depends on this.
+          users.users.${user} = {
+            isNormalUser = true;
+            extraGroups = [ "wheel" "docker" ];
+            name = user;
+            home = homedir;
+            shell = pkgs.fish;
+            openssh.authorizedKeys.keys = [ secrets.ssh-authorized-key ];
+          };
+ 
+          # Home Manager configuration. lib.recursiveUpdate will merge 
+          # the overlapping configurations deeply, taking the last value
+          # if it exists twice.
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = false;
+
+            users.${user} = lib.recursiveUpdate
+              (import ../common/home.nix { inherit pkgs lib config secrets; })
+              (lib.recursiveUpdate
+                (import ../nixos/home.nix { inherit pkgs lib config secrets; })
+                {
+                  home.file = lib.recursiveUpdate
+                   (import ../common/files.nix { inherit pkgs lib config secrets; })
+                   (import ../nixos/files.nix { inherit pkgs lib config secrets; });
+                }
+              );
+          };
+        })
+      ];
+    };
+
+/*
+  
   # Builder for a macOS system.
   mkDarwin = { hostname, system ? "aarch64-darwin", user, isPersonal ? true, tarsnapBackups ? false }:
     let
@@ -139,64 +279,6 @@ rec {
         }
       ];
     };
+  */
 
-    # Builder for a NixOS system
-    mkNixos = { hostname, system ? "x86_64-linux", user ? "leon", isPersonal ? true, useX11 ? false, useGnome ? false, isUnifiController ? false, tarsnapBackups ? false, tarsnapHealthCheckUUID ? "", tarsnapDirs ? [], tarsnapKey ? "" }:
-    let
-      pkgs = import inputs.nixpkgs { inherit system overlays; };
-      secrets = secretsAsAttrSet "${inputs.secrets}";
-      homedir = "/home/${user}";
-      configdir = "${homedir}/.config";
-      isWsl = false;
-    in
-    inputs.nixpkgs.lib.nixosSystem {
-      inherit system;
-
-      specialArgs = {
-        inherit pkgs hostname system user isPersonal homedir configdir secrets isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey;
-      };
-
-      modules = [
-        ../hw/${hostname}.nix
-        ../common
-        ../nixos
-
-        inputs.home-manager.nixosModules.home-manager
-
-        {
-          # System packages
-          environment.systemPackages =
-            (import ../common/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
-            ++
-            (import ../nixos/packages.nix { inherit pkgs homedir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
-
-          # Standard nixOS managed user configuration
-          users.users.${user} = {
-            isNormalUser = true;
-            extraGroups = [ "wheel" "docker" ];
-            name = user;
-            home = homedir;
-            shell = pkgs.fish;
-            openssh.authorizedKeys.keys = [ secrets.ssh-authorized-key ];
-          };
-
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = false;
-
-            users.${user} = pkgs.lib.recursiveUpdate
-              (import ../common/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
-              (
-                pkgs.lib.recursiveUpdate
-                  (import ../nixos/home.nix { inherit secrets pkgs homedir configdir isPersonal isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
-                  {
-                    home.file = pkgs.lib.recursiveUpdate
-                      (import ../common/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; })
-                      (import ../nixos/files.nix { inherit secrets homedir configdir isWsl useX11 useGnome isUnifiController tarsnapBackups tarsnapHealthCheckUUID tarsnapDirs tarsnapKey; });
-                  }
-              );
-          };
-        }
-      ];
-    };
 }
