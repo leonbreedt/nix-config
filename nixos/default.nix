@@ -13,6 +13,10 @@ in
 {
   # Networking
 
+  boot.kernel.sysctl = {
+    "net.ipv4.conf.all.forwarding" = isEdgeRouter;
+  };
+
   networking = {
     enableIPv6 = false;
     firewall = {

@@ -33,20 +33,23 @@
     ];
 
   networking = {
-    useDHCP = false;
-
-    interfaces.enp86s0.ipv4.addresses = [
-      {
-        address = "192.168.1.5"; # change to 192.168.1.1 when it is ready to take over
-        prefixLength = 24;
-      }
-    ];
+    interfaces = {
+      enp86s0 = {
+        useDHCP = false;
+        ipv4.addresses = [
+          {
+            address = "192.168.1.5"; # change to 192.168.1.1 when it is ready to take over
+            prefixLength = 24;
+          }
+        ];
+      };
+      wan.useDHCP = false;
+    };
 
     vlans = {
-      vlan10 = { id=10; interface="enp86s0"; }; # should be USB ethernet interface.
+      wan = { id=10; interface="enp86s0"; }; # should be USB ethernet interface (!)
     };
   };
-
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
