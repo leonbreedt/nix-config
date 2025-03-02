@@ -77,6 +77,28 @@ in
     unifiPackage = pkgs.unifi8;
   };
 
+  services.pppd = {
+    enable = false; # isEdgeRouter;
+    peers = {
+      spark = {
+        autostart = true;
+        enable = true;
+        config = ''
+          plugin pppoe.so wan
+          name "${secrets.ppp-username}";
+          password "${secrets.ppp-password}";
+
+          persist
+          maxfail 0
+          holdoff 5
+
+          noipdefault
+          defaultroute
+        '';
+      };
+    };
+  };
+
   services.unbound = {
     enable = isEdgeRouter;
     settings = {
