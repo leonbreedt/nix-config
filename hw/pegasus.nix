@@ -33,6 +33,8 @@
     ];
 
   networking = {
+    useDHCP = false;
+
     interfaces = {
       enp86s0 = {
         useDHCP = false;
@@ -43,11 +45,12 @@
           }
         ];
       };
+      enp0s20f0u2c2.useDHCP = false;
       wan.useDHCP = false;
     };
 
     vlans = {
-      wan = { id=10; interface="enp0s20f0u2"; };
+      wan = { id=10; interface="enp0s20f0u2c2"; };
     };
   };
 

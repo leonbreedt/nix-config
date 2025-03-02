@@ -25,12 +25,9 @@ in
     enableIPv6 = false;
     firewall = {
       enable = isEdgeRouter;
-      allowedTCPPorts = [ 22 ] ++ lib.optionals isDockerEnabled [ 2375 ];
+      allowedTCPPorts = [ 22 ];
     };
     nat.enable = true;
-    nftables = {
-      enable = isEdgeRouter;
-    };
   };
 
   # Base programs
@@ -87,19 +84,22 @@ in
   };
 
   services.pppd = {
-    enable = false; # isEdgeRouter;
+    enable = true;
     peers = {
       spark = {
         autostart = true;
         enable = true;
         config = ''
           plugin pppoe.so wan
-          name "${secrets.ppp-username}";
-          password "${secrets.ppp-password}";
+
+          user "${secrets.ppp-username}"
+          password "${secrets.ppp-password}"
 
           persist
           maxfail 0
           holdoff 5
+
+	  mtu 1492
 
           noipdefault
           defaultroute
