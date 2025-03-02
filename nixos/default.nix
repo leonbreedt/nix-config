@@ -25,9 +25,11 @@ in
     enableIPv6 = false;
     firewall = {
       enable = isEdgeRouter;
-      allowedTCPPorts = [ 22 ];
+      allowedTCPPorts = [ 22 53 ];
+      allowedUDPPorts = [ 53 ];
     };
     nat.enable = true;
+    nftables.enable = true;
   };
 
   # Base programs
@@ -99,9 +101,10 @@ in
           maxfail 0
           holdoff 5
 
-	  mtu 1492
+          mtu 1492
 
           noipdefault
+          noipv6
           defaultroute
         '';
       };
