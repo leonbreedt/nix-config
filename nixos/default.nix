@@ -29,11 +29,6 @@ in
       enable = isEdgeRouter;
       ruleset = ''
       table inet filter {
-         flowtable f {
-          hook ingress priority 0;
-          devices = { ppp0, enp86s0 };
-        }
-
         chain output {
           type filter hook output priority 100; policy accept;
         }
@@ -43,6 +38,7 @@ in
 
           # Allow trusted networks to access the router
           iifname {
+	    "lo",
             "enp86s0",
           } counter accept
 
@@ -54,21 +50,20 @@ in
         chain forward {
           type filter hook forward priority filter; policy drop;
 
-          # enable flow offloading for better throughput
-          ip protocol { tcp, udp } flow offload @f
-
           # Allow trusted network WAN access
           iifname {
-                  "enp86s0",
+            "lo",
+            "enp86s0",
           } oifname {
-                  "ppp0",
+            "ppp0",
           } counter accept comment "Allow trusted LAN to WAN"
 
           # Allow established WAN to return
           iifname {
-                  "ppp0",
+             "ppp0",
           } oifname {
-                  "enp86s0",
+	    "lo",
+            "enp86s0",
           } ct state established,related counter accept comment "Allow established back to LANs"
         }
       }
