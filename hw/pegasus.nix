@@ -38,7 +38,7 @@
         useDHCP = false;
         ipv4.addresses = [
           {
-            address = "192.168.1.5"; # change to 192.168.1.1 when it is ready to take over
+            address = "192.168.1.1";
             prefixLength = 24;
           }
         ];
