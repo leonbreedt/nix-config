@@ -73,6 +73,50 @@ in
     unifiPackage = pkgs.unifi8;
   };
 
+  services.unbound = {
+    enable = isEdgeRouter;
+    settings = {
+      server = {
+        interface = [ "0.0.0.0" ];
+        access-control = [ "127.0.0.1 allow" "192.168.1.0/24 allow" ];
+        use-syslog = true;
+        # https://unbound.docs.nlnetlabs.nl/en/latest/topics/core/performance.html
+        num-threads = 4;
+        msg-cache-slabs = 4;
+        rrset-cache-slabs = 4;
+        infra-cache-slabs = 4;
+        key-cache-slabs = 4;
+        # rrset=msg*2
+        rrset-cache-size = "200m";
+        msg-cache-size = "100m";
+        so-rcvbuf = "2m";
+        so-sndbuf = "2m";
+        # 1024/ncores - 50
+        outgoing-range = 200;
+        # outgoing-range/2
+        num-queries-per-thread = 100;
+      };
+      auth-zone = [
+        {
+          name = "home";
+          for-downstream = true;
+          for-upstream = true;
+          zonefile = ''${pkgs.writeTextFile {
+            name = "home.zone";
+            text = builtins.readFile ./config/home.zone;
+          }}
+          '';
+        }
+      ];
+      forward-zone = [
+        {
+          name = ".";
+          forward-addr = [ "122.56.237.1" "210.55.111.1" ]; # Spark NZ
+        }
+      ];
+    };
+  };
+
   services.cron = {
     enable = true;
 

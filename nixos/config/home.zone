@@ -1,0 +1,69 @@
+$TTL 0
+
+@ IN SOA pegasus.home. leon.sector42.io. (
+		2025022701      ; serial
+		1D              ; refresh
+		1H              ; retry
+		1W              ; expire
+		3H )            ; minimum
+
+$ORIGIN home.
+
+; dns
+home.	IN NS pegasus.home.
+
+; core infrastructure - 1..19
+pegasus			IN A 192.168.1.1
+gateway			IN CNAME pegasus.home.
+gw			IN CNAME pegasus.home.
+office-ap		IN A 192.168.1.2
+lounge-ap		IN A 192.168.1.3
+truenas			IN A 192.168.1.4
+nas			IN CNAME truenas.home.
+starbuck		IN A 192.168.1.5
+unifi-controller	IN CNAME starbuck.home.
+unifi			IN CNAME starbuck.home.
+tp-link-poe-switch	IN A 192.168.1.6
+dock-ethernet		IN A 192.168.1.7
+
+; services - 20..49
+postgresql		IN A 192.168.1.20
+db			IN CNAME postgresql.home.
+database		IN CNAME postgresql.home.
+
+plex-media-server	IN A 192.168.1.21
+plex			IN CNAME plex-media-server.home.
+
+step-ca			IN A 192.168.1.22
+ca			IN CNAME step-ca.home.
+
+teslamate		IN A 192.168.1.23
+
+; machines: 50..99
+galactica		IN A 192.168.1.50
+leon-desktop		IN CNAME galactica.home.
+athena			IN A 192.168.1.51
+leon-mbp		IN CNAME athena.home.
+work-mbp		IN A 192.168.1.52
+chanthaly-mba		IN A 192.168.1.53
+
+; mobile devices: 100..139
+leon-iphone		IN A 192.168.1.100
+leon-ipad		IN A 192.168.1.101
+leon-watch		IN A 192.168.1.102
+leon-tesla		IN A 192.168.1.103
+work-iphone		IN A 192.168.1.104
+chanthaly-iphone	IN A 192.168.1.105
+chanthaly-watch		IN A 192.168.1.106
+
+; other devices: 140..159
+mitsubishi-wifi-control	IN A 192.168.1.140
+tesla-wall-connector	IN A 192.168.1.141
+kitchen-homepod		IN A 192.168.1.142
+lounge-tv		IN A 192.168.1.143
+lounge-apple-tv		IN A 192.168.1.144
+apple-tv		IN CNAME lounge-apple-tv.
+apple-tv-4k		IN CNAME lounge-apple-tv.
+yoto-mini		IN A 192.168.1.145
+
+; ad-hoc: 160..254 (no DNS)
