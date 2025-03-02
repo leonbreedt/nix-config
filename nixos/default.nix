@@ -79,7 +79,7 @@ in
     systemCronJobs = 
       lib.optionals config.machine.tarsnap.enabled [
         ''
-          1 3 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.writeTextFile {
+          0 2 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.writeTextFile {
             name = "tarsnap-backup.sh";
             executable = true;
             text = ''
@@ -98,10 +98,10 @@ ${pkgs.tarsnap}/bin/tarsnap \
         ''
       ] ++ lib.optionals isUnifiController [
         ''
-          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s sector42.io -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/5629ec4f-d2b8-43e6-8328-9f43d1e10464 >/dev/null
+          0 2 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s sector42.io -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/5629ec4f-d2b8-43e6-8328-9f43d1e10464 >/dev/null
         ''
         ''
-          1 4 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
+          0 2 * * * root ${pkgs.moreutils}/bin/chronic ${pkgs.ssl-cert-check}/bin/ssl-cert-check -s leonbreedt.com -p 443 -n && ${pkgs.curl}/bin/curl -s -m 10 --retry 5 https://hc-ping.com/cd36f383-a2b0-4eb9-a2b9-2a4c082f1fee >/dev/null
         ''
       ];
   };

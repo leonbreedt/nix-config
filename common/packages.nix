@@ -5,6 +5,7 @@
 with pkgs; [
   bat
   btop
+  delta
   eza
   fd
   fish
@@ -28,7 +29,6 @@ with pkgs; [
   cascadia-code
   coding-fonts
   curl
-  delta
   deno
   difftastic
   du-dust
