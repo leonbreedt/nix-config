@@ -47,7 +47,7 @@
     };
 
     vlans = {
-      wan = { id=10; interface="enp86s0"; }; # should be USB ethernet interface (!)
+      wan = { id=10; interface="enp0s20f0u2"; };
     };
   };
 

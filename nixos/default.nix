@@ -11,6 +11,10 @@ let
   useGnome = useX11 && config.machine.gui.environment == "gnome";
 in
 {
+  # Time
+
+  time.timeZone = lib.mkDefault "Pacific/Auckland";
+
   # Networking
 
   boot.kernel.sysctl = {
@@ -23,7 +27,8 @@ in
       enable = isEdgeRouter;
       allowedTCPPorts = [ 22 ] ++ lib.optionals isDockerEnabled [ 2375 ];
     };
-    nat = {
+    nat.enable = true;
+    nftables = {
       enable = isEdgeRouter;
     };
   };
@@ -70,6 +75,10 @@ in
     enable = true;
     settings.PasswordAuthentication = false;
     settings.PermitRootLogin = "no";
+  };
+
+  services.ntp = {
+    enable = true;
   };
 
   services.unifi = {
