@@ -23,13 +23,69 @@ in
 
   networking = {
     enableIPv6 = false;
-    firewall = {
+    firewall.enable = false;
+    nat.enable = false;
+    nftables = {
       enable = isEdgeRouter;
-      allowedTCPPorts = [ 22 53 ];
-      allowedUDPPorts = [ 53 ];
+      ruleset = ''
+      table inet filter {
+         flowtable f {
+          hook ingress priority 0;
+          devices = { ppp0, enp86s0 };
+        }
+
+        chain output {
+          type filter hook output priority 100; policy accept;
+        }
+
+        chain input {
+          type filter hook input priority filter; policy drop;
+
+          # Allow trusted networks to access the router
+          iifname {
+            "enp86s0",
+          } counter accept
+
+          # Allow returning traffic from ppp0 and drop everthing else
+          iifname "ppp0" ct state { established, related } counter accept
+          iifname "ppp0" drop
+        }
+
+        chain forward {
+          type filter hook forward priority filter; policy drop;
+
+          # enable flow offloading for better throughput
+          ip protocol { tcp, udp } flow offload @f
+
+          # Allow trusted network WAN access
+          iifname {
+                  "enp86s0",
+          } oifname {
+                  "ppp0",
+          } counter accept comment "Allow trusted LAN to WAN"
+
+          # Allow established WAN to return
+          iifname {
+                  "ppp0",
+          } oifname {
+                  "enp86s0",
+          } ct state established,related counter accept comment "Allow established back to LANs"
+        }
+      }
+
+      table ip nat {
+        chain prerouting {
+          type nat hook prerouting priority filter; policy accept;
+        }
+
+        # NAT masquerading over ppp0
+        chain postrouting {
+          type nat hook postrouting priority filter; policy accept;
+          oifname "ppp0" masquerade
+        }
+      };
+      '';
     };
-    nat.enable = true;
-    nftables.enable = true;
   };
 
   # Base programs
